@@ -1,0 +1,45 @@
+images {
+  image: "/images/line_pipe_red.png"
+}
+images {
+  image: "/images/line_pipe_blue.png"
+}
+images {
+  image: "/images/line_pipe_dark.png"
+}
+images {
+  image: "/images/line_pipe_green.png"
+}
+images {
+  image: "/images/line_pipe_yellow.png"
+}
+images {
+  image: "/images/curve_pipe_red.png"
+}
+images {
+  image: "/images/curve_pipe_blue.png"
+}
+images {
+  image: "/images/curve_pipe_dark.png"
+}
+images {
+  image: "/images/curve_pipe_green.png"
+}
+images {
+  image: "/images/curve_pipe_yellow.png"
+}
+images {
+  image: "/images/end_pipe_blue.png"
+}
+images {
+  image: "/images/end_pipe_dark.png"
+}
+images {
+  image: "/images/end_pipe_green.png"
+}
+images {
+  image: "/images/end_pipe_red.png"
+}
+images {
+  image: "/images/end_pipe_yellow.png"
+}

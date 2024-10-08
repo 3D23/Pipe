@@ -1,0 +1,61 @@
+local colors_module = require("main.colors")
+
+local function create_grid(self, count_in_row, count_in_columm)
+	self.count_cells = count_in_columm * count_in_row
+	for i = 0, count_in_columm - 1 do
+		for j = 0, count_in_row - 1 do
+			local cell = factory.create("#cell_factory", 
+				vmath.vector3(i * 70 + 100, j * 70 + 100, 0), 
+				nil, 
+				{ 
+					is_ended = true, 
+					color = colors_module.NONE,
+					coords = vmath.vector3(i, j, 0)
+				})
+			self.cells[i.." "..j] = cell
+		end
+	end
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.count_cells = 0
+	self.cells = {}
+	self.current_color = colors_module.NONE
+	create_grid(self, 5, 5)
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("touch") and action.pressed then
+		for _, val in pairs(self.cells) do
+			local cell_url = msg.url(nil, val, "cell")
+			msg.post(cell_url, "on_start", { touch_pos = vmath.vector3(action.x, action.y, 0) })
+		end
+	elseif action_id == hash("touch") and action.released then
+		for _, val in pairs(self.cells) do
+			local cell_url = msg.url(nil, val, "cell")
+			msg.post(cell_url, "on_release", { touch_pos = vmath.vector3(action.x, action.y, 0) })
+		end
+	elseif action_id == hash("touch") then
+		for _, val in pairs(self.cells) do
+			local cell_url = msg.url(nil, val, "cell")
+			msg.post(cell_url, "on_pick_cell", { touch_pos = vmath.vector3(action.x, action.y, 0) })
+		end
+	end
+end
+
+function on_reload(self)
+end
+
+function update(self, dt)
+end
+
+function fixed_update(self, dt)
+end
+
+function on_message(self, message_id, message, sender)
+end
