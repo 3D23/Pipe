@@ -18,3 +18,16 @@ embedded_components {
   "}\n"
   ""
 }
+embedded_components {
+  id: "cleat_factory"
+  type: "factory"
+  data: "prototype: \"/main/cleat.go\"\n"
+  "load_dynamically: true\n"
+  ""
+}
+embedded_components {
+  id: "pipe_factory"
+  type: "factory"
+  data: "prototype: \"/main/pipe.go\"\n"
+  ""
+}

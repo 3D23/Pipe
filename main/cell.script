@@ -13,6 +13,7 @@ end
 
 function init(self)
 	self.picked = false
+	self.busy = false
 end
 
 function on_message(self, message_id, message, sender)
@@ -20,9 +21,8 @@ function on_message(self, message_id, message, sender)
 		local pos = message.touch_pos
 		if pick(self, pos) and self.picked == false then
 			self.picked = true
-			print("dsd")
 			go.animate("#cell_sprite", "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1.1, 1.1, 0), go.EASING_LINEAR, 0.1)
-			msg.post(sender, "on_pick_cell", { cell_coordinates = self.coordinates })
+			msg.post(sender, "ok_on_pick", { coords = self.coords })
 		elseif pick(self, pos) == false and self.picked == true then
 			self.picked = false
 			go.animate("#cell_sprite", "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1, 1, 0), go.EASING_LINEAR, 0.1)
@@ -32,12 +32,21 @@ function on_message(self, message_id, message, sender)
 		if pick(self, pos) then
 			self.picked = false
 			go.animate("#cell_sprite", "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1, 1, 0), go.EASING_LINEAR, 0.1)
+			msg.post(sender, "ok_on_release", { coords = self.coords })
 		end
 	elseif message_id == hash("on_start") then
 		local pos = message.touch_pos
-		if pick(self, pos) then
+		if pick(self, pos) and self.is_ended == true then
 			self.picked = true
 			go.animate("#cell_sprite", "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1.1, 1.1, 0), go.EASING_LINEAR, 0.1)
+			msg.post(sender, "ok_on_start", { coords = self.coords, color = self.color })
+		end
+	end
+
+	if message_id == hash("add_cleat") then
+		if self.is_ended then
+			pprint(self.color)
+		    factory.create("#cleat_factory", nil, nil, { color = self.color })
 		end
 	end
 end

@@ -13,4 +13,5 @@ input_method = HiddenInputField
 
 [project]
 title = Pipe
+custom_resources = res/
 
