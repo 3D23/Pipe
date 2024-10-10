@@ -5,7 +5,6 @@ go.property("vector", vmath.vector3())
 go.property("color", -1)
 
 function init(self)
-    print(self.is_end)
     if self.is_end then
         local color = colors_module.get_state(self.color)
 	    if color == "RED" then
@@ -20,7 +19,6 @@ function init(self)
 		    sprite.play_flipbook("#sprite", "end_pipe_dark")
 	    end
     else
-        print(self.color)
         local color = colors_module.get_state(self.color)
 	    if color == "RED" then
 		    sprite.play_flipbook("#sprite", "line_pipe_red")

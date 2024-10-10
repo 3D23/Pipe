@@ -3,7 +3,6 @@ go.property("color", -1)
 
 function init(self)
 	local color = colors_module.get_state(self.color)
-	print(color)
 	if color == "RED" then
 		sprite.play_flipbook("#sprite", "cleat_red")
 	elseif color == "YELLOW" then
