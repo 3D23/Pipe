@@ -1,7 +1,11 @@
+components {
+  id: "pipe"
+  component: "/main/pipe.script"
+}
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "default_animation: \"curve_pipe_blue\"\n"
+  data: "default_animation: \"end_pipe_red\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "textures {\n"
   "  sampler: \"texture_sampler\"\n"
@@ -9,6 +13,6 @@ embedded_components {
   "}\n"
   ""
   position {
-    z: 2.0
+    z: 1.0
   }
 }

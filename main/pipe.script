@@ -1,27 +1,46 @@
+local colors_module = require("main.colors")
+
+go.property("is_end", false)
+go.property("vector", vmath.vector3())
+go.property("color", -1)
+
 function init(self)
-
-end
-
-function final(self)
-
-end
-
-function update(self, dt)
-
-end
-
-function fixed_update(self, dt)
-
+    print(self.is_end)
+    if self.is_end then
+        local color = colors_module.get_state(self.color)
+	    if color == "RED" then
+		    sprite.play_flipbook("#sprite", "end_pipe_red")
+	    elseif color == "YELLOW" then
+		    sprite.play_flipbook("#sprite", "end_pipe_yellow")
+	    elseif color == "GREEN" then
+		    sprite.play_flipbook("#sprite", "end_pipe_green")
+	    elseif color == "BLUE" then
+		    sprite.play_flipbook("#sprite", "end_pipe_blue")
+	    elseif color == "DARK" then
+		    sprite.play_flipbook("#sprite", "end_pipe_dark")
+	    end
+    else
+        print(self.color)
+        local color = colors_module.get_state(self.color)
+	    if color == "RED" then
+		    sprite.play_flipbook("#sprite", "line_pipe_red")
+	    elseif color == "YELLOW" then
+		    sprite.play_flipbook("#sprite", "line_pipe_yellow")
+	    elseif color == "GREEN" then
+		    sprite.play_flipbook("#sprite", "line_pipe_green")
+	    elseif color == "BLUE" then
+		    sprite.play_flipbook("#sprite", "line_pipe_blue")
+	    elseif color == "DARK" then
+		    sprite.play_flipbook("#sprite", "line_pipe_dark")
+	    end
+    end
 end
 
 function on_message(self, message_id, message, sender)
+    if message_id == hash("update_pipe") then
+    end
 
-end
-
-function on_input(self, action_id, action)
-
-end
-
-function on_reload(self)
-
+    if message_id == hash("delete_pipe") then
+        go.delete()
+    end
 end

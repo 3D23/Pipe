@@ -83,13 +83,17 @@ function on_message(self, message_id, message, sender)
 		self.on_started = true
 		self.current_cell_coords = message.coords
 		self.current_cell = sender
-		msg.post(self.current_cell, "create_pipe", { type = "end", color = message.color, vector = { x = 0, y = 0 }})
+		self.current_color = message.color;
+		msg.post(self.current_cell, "try_create_pipe", { color = message.color, vector = vmath.vector3()})
 	elseif message_id == hash("ok_on_pick") then
 		self.prev_cell_coords = self.current_cell_coords
 		self.current_cell_coords = message.coords
 		self.prev_cell = self.current_cell
 		self.current_cell = sender
+		msg.post(self.prev_cell, "update_pipe", { vector = { x = nil, y = nil }})
+		msg.post(sender, "try_create_pipe", { color = self.current_color, vector = vmath.vector3()})
 	elseif message_id == hash("ok_on_release") then
+		self.current_color = colors_module.NONE
 		self.current_cell_coords = vmath.vector3(-1, -1, -1)
 		self.prev_cell_coords = vmath.vector3(-1, -1, -1)
 		if is_valid(self.current_path) then
