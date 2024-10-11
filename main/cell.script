@@ -15,13 +15,33 @@ function init(self)
 	self.picked = false
 	self.busy = false
 	self.pipe = nil
+	self.vectors = {}
 end
 
 local function update_pipe(self, message)
+	local vector = vmath.vector3()
+	if #self.vectors == 2 then
+		if (self.vectors[1].x == self.vectors[2].x and 
+			self.vectors[1].y == self.vectors[2].y) then
+				vector = self.vectors[1]
+		end
+		if (self.vectors[1].x == 0 and self.vectors[2].x == 0) then
+			vector = self.vectors[1]
+		else
+			local vector_sum = vmath.vector3(self.vectors[1].x + self.vectors[2].x, self.vectors[1].y + self.vectors[2].y, 0)
+			local determinant = (self.vectors[1].x * self.vectors[2].y) - (self.vectors[1].y  * self.vectors[2].x)
+			vector = vmath.vector3(vector_sum.x * determinant, vector_sum.y * determinant, 0)
+			print(vector)
+		end
+	elseif #self.vectors == 1 then
+		vector = self.vectors[1]
+		print(vector)
+	end
+
 	if self.is_ended then
-		msg.post(self.pipe, "update_pipe", { is_end = true, vector = message.vector, color = message.color })
+		msg.post(self.pipe, "update_pipe", { is_end = true, vector = vector, color = message.color })
 	else
-		msg.post(self.pipe, "update_pipe", { is_end = false, vector = message.vector, color = message.color })
+		msg.post(self.pipe, "update_pipe", { is_end = false, vector = vector, color = message.color })
 	end
 end
 
@@ -33,9 +53,10 @@ local function create_pipe(self, message)
 	end
 end
 
-local function delete_pipe(self, message)
+local function delete_pipe(self)
 	msg.post(self.pipe, "delete_pipe")
 	self.pipe = nil
+	self.vectors = {}
 end
 
 function on_message(self, message_id, message, sender)
@@ -72,20 +93,27 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("try_create_pipe") then
+		table.insert(self.vectors, message.vector)
 		if self.pipe then
 			update_pipe(self, message)
+			msg.post(sender, "return_path_by_cell")
 		else
 			create_pipe(self, message) 
+			msg.post(sender, "add_cell_to_path")
 		end
 	end
 
 	if message_id == hash("update_pipe") then
+		if (#self.vectors == 2) then
+			table.remove(self.vectors, 1)
+			table.insert(self.vectors, 1, message.vector)
+		end
 		update_pipe(self, message)
 	end
 
 	if message_id == hash("try_delete_pipe") then
 		if self.pipe then
-			delete_pipe(self, message)
+			delete_pipe(self)
 		end
 	end
 end

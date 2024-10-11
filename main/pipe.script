@@ -4,7 +4,45 @@ go.property("is_end", false)
 go.property("vector", vmath.vector3())
 go.property("color", -1)
 
+
+local function update_pipe(self, vector)
+	if self.is_end then
+        local color = colors_module.get_state(self.color)
+	    if color == "RED" then
+		    sprite.play_flipbook("#sprite", "end_pipe_red")
+	    elseif color == "YELLOW" then
+		    sprite.play_flipbook("#sprite", "end_pipe_yellow")
+	    elseif color == "GREEN" then
+		    sprite.play_flipbook("#sprite", "end_pipe_green")
+	    elseif color == "BLUE" then
+		    sprite.play_flipbook("#sprite", "end_pipe_blue")
+	    elseif color == "DARK" then
+		    sprite.play_flipbook("#sprite", "end_pipe_dark")
+	    end
+    else
+		local color = colors_module.get_state(self.color)
+	    if color == "RED" then
+		    sprite.play_flipbook("#sprite", self.type.."_pipe_red")
+	    elseif color == "YELLOW" then
+		    sprite.play_flipbook("#sprite", self.type.."_pipe_yellow")
+	    elseif color == "GREEN" then
+		    sprite.play_flipbook("#sprite", self.type.."_pipe_green")
+	    elseif color == "BLUE" then
+		    sprite.play_flipbook("#sprite", self.type.."_pipe_blue")
+	    elseif color == "DARK" then
+		    sprite.play_flipbook("#sprite", self.type.."_pipe_dark")
+	    end
+	end
+end
+
 function init(self)
+	self.type = ""
+	if self.is_end then
+		self.type = "end"
+	else
+		self.type = "line"
+	end
+
     if self.is_end then
         local color = colors_module.get_state(self.color)
 	    if color == "RED" then
@@ -36,6 +74,17 @@ end
 
 function on_message(self, message_id, message, sender)
     if message_id == hash("update_pipe") then
+		if (message.vector.x == 0 or message.vector.y == 0) then
+			if self.is_ended == false then
+				self.type = "line"
+				update_pipe(self, message.vector)
+			end
+		else
+			if self.is_ended == false then
+				self.type = "curve"
+				update_pipe(self, message.vector)
+			end
+		end
     end
 
     if message_id == hash("delete_pipe") then

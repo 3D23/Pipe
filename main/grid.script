@@ -8,6 +8,8 @@ local function get_levels_settings(self)
 end
 
 local function clear_path(self)
+	cells_path.clear_path(self.current_path)
+	self.current_path = nil
 end
 
 local function is_valid(path)
@@ -45,7 +47,7 @@ function init(self)
 	self.current_cell = nil
 	self.prev_cell = nil
 	self.prev_cell_coords = vmath.vector3(-1, -1, -1)
-	self.current_path = {}
+	self.current_path = nil
 	local levels_settings = get_levels_settings(self)
 	create_grid(self, 5, 5, levels_settings)
 end
@@ -84,14 +86,19 @@ function on_message(self, message_id, message, sender)
 		self.current_cell_coords = message.coords
 		self.current_cell = sender
 		self.current_color = message.color;
-		msg.post(self.current_cell, "try_create_pipe", { color = message.color, vector = vmath.vector3()})
+		self.current_path = {}
+		cells_pathes.add_path(self.current_path)
+		msg.post(self.current_cell, "try_create_pipe", { color = message.color, vector = vmath.vector3(0, 0, 0)})
 	elseif message_id == hash("ok_on_pick") then
 		self.prev_cell_coords = self.current_cell_coords
 		self.current_cell_coords = message.coords
 		self.prev_cell = self.current_cell
 		self.current_cell = sender
-		msg.post(self.prev_cell, "update_pipe", { vector = { x = nil, y = nil }})
-		msg.post(sender, "try_create_pipe", { color = self.current_color, vector = vmath.vector3()})
+		msg.post(self.prev_cell, "update_pipe", { vector = vmath.vector3(self.current_cell_coords.x - self.prev_cell_coords.x, 
+		self.current_cell_coords.y - self.prev_cell_coords.y, 0)})
+		msg.post(sender, "try_create_pipe", { color = self.current_color, 
+			vector = vmath.vector3(self.current_cell_coords.x - self.prev_cell_coords.x, 
+			self.current_cell_coords.y - self.prev_cell_coords.y, 0)})
 	elseif message_id == hash("ok_on_release") then
 		self.current_color = colors_module.NONE
 		self.current_cell_coords = vmath.vector3(-1, -1, -1)
@@ -100,6 +107,18 @@ function on_message(self, message_id, message, sender)
 			
 		else
 			clear_path(self)
+		end
+	end
+
+	if message_id == hash("add_cell_to_path") then
+		cells_path.try_add_cell(sender)
+	end
+
+	if message_id == hash("return_path_by_cell") then
+		local deleted_cells_index = cells_pathes.return_by_cell(sender)[2]
+		local path = cells_pathes.return_by_cell(sender)[1]
+		for _, value in ipairs(deleted_cells_index) do
+			msg.post(path[value], "try_delete_pipe")
 		end
 	end
 end
