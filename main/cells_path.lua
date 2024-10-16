@@ -1,5 +1,16 @@
 cells_pathes = {}
 
+function get_path_by_cell(cell) 
+    for _, path in ipairs(cells_pathes) do
+        for _, c in ipairs(path) do
+            if c == cell then
+                return path
+            end
+        end
+    end
+    return nil
+end
+
 function cells_pathes.add_path(path) 
     if cells_pathes then
         table.insert(cells_pathes, path)

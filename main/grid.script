@@ -7,12 +7,29 @@ local function get_levels_settings(self)
 	return table["levels"]
 end
 
-local function clear_path(self)
-	cells_path.clear_path(self.current_path)
-	self.current_path = nil
+local function clear_path(self, path)
+	if path then
+		for _, c in ipairs(path) do
+			msg.post(c, "try_delete_pipe")
+		end
+		cells_path.clear_path(path)
+		path = nil
+	else 
+		for _, c in ipairs(self.current_path) do
+			msg.post(c, "try_delete_pipe")
+		end
+		cells_path.clear_path(self.current_path)
+		self.current_path = nil
+	end
 end
 
-local function is_valid(path)
+local function is_valid(self, color, sender)
+	print(color == self.current_color and 
+	self.current_path[1] ~= self.current_path[#self.current_path])
+--TITLE change color logic
+	return color == self.current_color and 
+		self.current_path[1] ~= sender
+--END
 end
 
 local function create_grid(self, count_in_row, count_in_columm, settings)
@@ -48,6 +65,7 @@ function init(self)
 	self.prev_cell = nil
 	self.prev_cell_coords = vmath.vector3(-1, -1, -1)
 	self.current_path = nil
+	self.last_touch_pos = nil
 	local levels_settings = get_levels_settings(self)
 	create_grid(self, 5, 5, levels_settings)
 end
@@ -82,32 +100,52 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("ok_on_start") then
-		self.on_started = true
-		self.current_cell_coords = message.coords
-		self.current_cell = sender
-		self.current_color = message.color;
-		self.current_path = {}
-		cells_pathes.add_path(self.current_path)
-		msg.post(self.current_cell, "try_create_pipe", { color = message.color, vector = vmath.vector3(0, 0, 0)})
+		if message.busy then
+			local path = get_path_by_cell(sender)
+			print(#path)
+			clear_path(self, path)
+		else
+			self.on_started = true
+			self.current_cell_coords = message.coords
+			self.current_cell = sender
+			self.current_color = message.color;
+			self.current_path = {}
+			cells_pathes.add_path(self.current_path)
+			msg.post(self.current_cell, "try_create_pipe", { color = message.color, vector = vmath.vector3(0, 0, 0)})
+		end
 	elseif message_id == hash("ok_on_pick") then
-		self.prev_cell_coords = self.current_cell_coords
-		self.current_cell_coords = message.coords
-		self.prev_cell = self.current_cell
-		self.current_cell = sender
-		msg.post(self.prev_cell, "update_pipe", { vector = vmath.vector3(self.current_cell_coords.x - self.prev_cell_coords.x, 
-		self.current_cell_coords.y - self.prev_cell_coords.y, 0)})
-		msg.post(sender, "try_create_pipe", { color = self.current_color, 
-			vector = vmath.vector3(self.current_cell_coords.x - self.prev_cell_coords.x, 
+--TITLE change color logic
+		if message.busy == true then
+			msg.post(sender, "on_release", { touch_pos = message.touch_pos })
+			self.on_started = false
+		elseif message.is_ended == true and message.color ~= self.current_color then
+			msg.post(sender, "on_release", { touch_pos = message.touch_pos })
+			self.on_started = false
+		elseif math.abs(self.current_cell_coords.x - message.coords.x) + math.abs(self.current_cell_coords.y - message.coords.y) > 1 then
+			msg.post(sender, "on_release", { touch_pos = message.touch_pos })
+			self.on_started = false
+		else
+--END
+			self.prev_cell_coords = self.current_cell_coords
+			self.current_cell_coords = message.coords
+			self.prev_cell = self.current_cell
+			self.current_cell = sender
+			msg.post(self.prev_cell, "update_pipe", { vector = vmath.vector3(self.current_cell_coords.x - self.prev_cell_coords.x, 
 			self.current_cell_coords.y - self.prev_cell_coords.y, 0)})
+			msg.post(sender, "try_create_pipe", { color = self.current_color, 
+				vector = vmath.vector3(self.current_cell_coords.x - self.prev_cell_coords.x, 
+				self.current_cell_coords.y - self.prev_cell_coords.y, 0)})
+		end
 	elseif message_id == hash("ok_on_release") then
-		self.current_color = colors_module.NONE
+		print("fd")
 		self.current_cell_coords = vmath.vector3(-1, -1, -1)
 		self.prev_cell_coords = vmath.vector3(-1, -1, -1)
-		if is_valid(self.current_path) then
+		if is_valid(self, message.color, sender) then
 			
 		else
 			clear_path(self)
 		end
+		self.current_color = colors_module.NONE
 	end
 
 	if message_id == hash("add_cell_to_path") then
