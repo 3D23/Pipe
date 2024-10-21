@@ -23,17 +23,43 @@ local function clear_path(self, path)
 	end
 end
 
-local function is_valid(self, color, sender)
-	print(color == self.current_color and 
-	self.current_path[1] ~= self.current_path[#self.current_path])
+local function is_valid(self, color, coords, sender)
 --TITLE change color logic
 	return color == self.current_color and 
-		self.current_path[1] ~= sender
+		self.current_path[1] ~= sender and 
+		math.abs(self.current_cell_coords.x - coords.x) + math.abs(self.current_cell_coords.y - coords.y) <= 1
 --END
 end
 
+local function getn(table)
+	local count = 0
+	for _, val in pairs(table) do
+		count = count + 1
+	end
+	return count
+end
+
+local function send_message_check_busy(self)
+	local count = 0
+	for key, value in pairs(self.cells) do
+		count = count + 1
+		local cell_url = msg.url(nil, value, "cell")
+		msg.post(cell_url, "check_busy", {last = count == getn(self.cells)} )
+	end
+end
+
+local function check_game_state(self) 
+	if self.count_busy_cells == getn(self.cells) then
+--TITLE Win Logic
+print("WIN")
+--END
+	end
+end
+
+
 local function create_grid(self, count_in_row, count_in_columm, settings)
-	local idx_level = math.random(#settings)
+	math.randomseed(os.time())
+	local idx_level = math.random(3)
 	local settings_level = settings[idx_level]
 	self.count_cells = count_in_columm * count_in_row
 	local idx_cell = 0
@@ -58,6 +84,7 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.count_cells = 0
 	self.cells = {}
+	self.count_busy_cells = 0
 	self.current_color = colors_module.NONE
 	self.on_started = false
 	self.current_cell_coords = vmath.vector3(-1, -1, -1)
@@ -102,7 +129,6 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("ok_on_start") then
 		if message.busy then
 			local path = get_path_by_cell(sender)
-			print(#path)
 			clear_path(self, path)
 		else
 			self.on_started = true
@@ -118,10 +144,10 @@ function on_message(self, message_id, message, sender)
 		if message.busy == true then
 			msg.post(sender, "on_release", { touch_pos = message.touch_pos })
 			self.on_started = false
-		elseif message.is_ended == true and message.color ~= self.current_color then
+		elseif math.abs(self.current_cell_coords.x - message.coords.x) + math.abs(self.current_cell_coords.y - message.coords.y) > 1 then
 			msg.post(sender, "on_release", { touch_pos = message.touch_pos })
 			self.on_started = false
-		elseif math.abs(self.current_cell_coords.x - message.coords.x) + math.abs(self.current_cell_coords.y - message.coords.y) > 1 then
+		elseif message.is_ended == true and message.color ~= self.current_color then
 			msg.post(sender, "on_release", { touch_pos = message.touch_pos })
 			self.on_started = false
 		else
@@ -137,14 +163,13 @@ function on_message(self, message_id, message, sender)
 				self.current_cell_coords.y - self.prev_cell_coords.y, 0)})
 		end
 	elseif message_id == hash("ok_on_release") then
-		print("fd")
-		self.current_cell_coords = vmath.vector3(-1, -1, -1)
-		self.prev_cell_coords = vmath.vector3(-1, -1, -1)
-		if is_valid(self, message.color, sender) then
-			
+		if is_valid(self, message.color, message.coords, sender) then
+			send_message_check_busy(self)
 		else
 			clear_path(self)
 		end
+		self.current_cell_coords = vmath.vector3(-1, -1, -1)
+		self.prev_cell_coords = vmath.vector3(-1, -1, -1)
 		self.current_color = colors_module.NONE
 	end
 
@@ -157,6 +182,17 @@ function on_message(self, message_id, message, sender)
 		local path = cells_pathes.return_by_cell(sender)[1]
 		for _, value in ipairs(deleted_cells_index) do
 			msg.post(path[value], "try_delete_pipe")
+		end
+	end
+
+	if message_id == hash("answer_is_busy") then
+		if message.busy then
+			self.count_busy_cells = self.count_busy_cells + 1
+		end
+
+		if message.last then
+			check_game_state(self)
+			self.count_busy_cells = 0
 		end
 	end
 end
