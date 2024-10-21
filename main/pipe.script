@@ -5,7 +5,7 @@ go.property("vector", vmath.vector3())
 go.property("color", -1)
 
 
-local function update_pipe(self, vector)
+local function update_pipe(self, vector, updated)
 	if self.is_end then
         local color = colors_module.get_state(self.color)
 	    if color == "RED" then
@@ -56,6 +56,25 @@ local function update_pipe(self, vector)
 			local rotation = vmath.quat_rotation_z(math.pi / 2)
 			go.set_rotation(rotation)
 		end
+	elseif self.is_end then
+		local new_vector = vector
+		if updated == false then
+			new_vector = vector * -1
+		end
+
+		if new_vector.x == 1 then
+			local rotation = vmath.quat_rotation_z(math.pi / 2)
+			go.set_rotation(rotation)
+		elseif new_vector.x == -1 then
+			local rotation = vmath.quat_rotation_z(math.pi / -2)
+			go.set_rotation(rotation)
+		elseif new_vector.y == 1 then
+			local rotation = vmath.quat_rotation_z(math.pi)
+			go.set_rotation(rotation)
+		elseif new_vector.y == -1 then
+			local rotation = vmath.quat_rotation_z(0)
+			go.set_rotation(rotation)
+		end
 	end
 end
 
@@ -67,7 +86,7 @@ function init(self)
 		self.type = "line"
 	end
 
-    update_pipe(self, self.vector)
+    update_pipe(self, self.vector, false)
 end
 
 function on_message(self, message_id, message, sender)
@@ -75,12 +94,14 @@ function on_message(self, message_id, message, sender)
 		if (message.vector.x == 0 or message.vector.y == 0) then
 			if self.is_end == false then
 				self.type = "line"
-				update_pipe(self, message.vector)
+				update_pipe(self, message.vector, true)
+			else
+				update_pipe(self, message.vector, true)
 			end
 		else
 			if self.is_end == false then
 				self.type = "curve"
-				update_pipe(self, message.vector)
+				update_pipe(self, message.vector, true)
 			end
 		end
     end

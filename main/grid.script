@@ -59,7 +59,7 @@ end
 
 local function create_grid(self, count_in_row, count_in_columm, settings)
 	math.randomseed(os.time())
-	local idx_level = math.random(3)
+	local idx_level = math.random(#settings)
 	local settings_level = settings[idx_level]
 	self.count_cells = count_in_columm * count_in_row
 	local idx_cell = 0
