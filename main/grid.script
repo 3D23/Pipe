@@ -67,7 +67,7 @@ local function create_grid(self, count_in_row, count_in_columm, settings)
 		for j = 0, count_in_row - 1 do
 			idx_cell = idx_cell + 1
 			local cell = factory.create("#cell_factory", 
-				vmath.vector3(i * 70 + 100, j * 70 + 100, 0), 
+				vmath.vector3(i * 70 + 170, j * 70 + 150, 0), 
 				nil, 
 				{ 
 					is_ended = settings_level[idx_cell]["isEndPoint"], 
@@ -82,6 +82,7 @@ end
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 	self.count_cells = 0
 	self.cells = {}
 	self.count_busy_cells = 0

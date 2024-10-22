@@ -1,0 +1,7 @@
+images {
+  image: "/images/exit_pipe_game.png"
+}
+images {
+  image: "/images/reset_pipe_game.png"
+}
+extrude_borders: 2
