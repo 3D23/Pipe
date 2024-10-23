@@ -7,12 +7,20 @@ embedded_components {
   type: "sprite"
   data: "default_animation: \"cleat_red\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
+  "size {\n"
+  "  x: 82.0\n"
+  "  y: 82.0\n"
+  "}\n"
+  "size_mode: SIZE_MODE_MANUAL\n"
   "textures {\n"
   "  sampler: \"texture_sampler\"\n"
   "  texture: \"/main/cleat.atlas\"\n"
   "}\n"
   ""
   position {
-    z: 1.0
+    z: 0.8
+  }
+  scale {
+    z: 0.8
   }
 }

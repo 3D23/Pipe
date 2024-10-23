@@ -1,10 +1,13 @@
+local camera_orto = require("orthographic.camera")
 go.property("is_ended", false)
 go.property("color", 0)
 go.property("coords", vmath.vector3())
 
 local function pick(self, touch_pos)
-	if touch_pos.x >= (go.get_position().x - 32) and touch_pos.x <= (go.get_position().x + 32) then
-		if touch_pos.y >= (go.get_position().y - 32) and touch_pos.y <= (go.get_position().y + 32) then
+	local size = go.get("#cell_sprite", "size")
+	local world_pos = camera_orto.screen_to_world(hash("/camera"), touch_pos)
+	if world_pos.x >= (go.get_position().x - size.x / 2) and world_pos.x <= (go.get_position().x + size.x / 2) then
+		if world_pos.y >= (go.get_position().y - size.y / 2) and world_pos.y <= (go.get_position().y + size.y / 2) then
 			return true
 		end
 	end

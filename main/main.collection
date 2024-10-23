@@ -3,12 +3,55 @@ instances {
   id: "grid"
   prototype: "/main/gird.go"
 }
+instances {
+  id: "camera"
+  prototype: "/orthographic/camera.go"
+  position {
+    x: 320.0
+    y: 480.0
+  }
+  component_properties {
+    id: "script"
+    properties {
+      id: "projection"
+      value: "FIXED_AUTO"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+}
 scale_along_z: 0
 embedded_instances {
-  id: "go"
+  id: "gui"
   data: "components {\n"
   "  id: \"pipe\"\n"
   "  component: \"/main/pipe.gui\"\n"
   "}\n"
   ""
+}
+embedded_instances {
+  id: "background"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"game_background\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/pipe_gui.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: 0.5\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 315.0
+    y: 422.0
+  }
+  scale3 {
+    x: 17.752254
+    y: 15.003965
+    z: 0.5
+  }
 }

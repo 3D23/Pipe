@@ -5,8 +5,23 @@ textures {
 }
 nodes {
   position {
-    x: 75.0
-    y: 883.0
+    x: 319.0
+    y: 880.0
+  }
+  size {
+    x: 640.0
+    y: 150.0
+  }
+  type: TYPE_BOX
+  id: "buttons"
+  yanchor: YANCHOR_TOP
+  inherit_alpha: true
+  alpha: 0.0
+  visible: false
+}
+nodes {
+  position {
+    x: -240.0
   }
   size {
     x: 150.0
@@ -15,12 +30,12 @@ nodes {
   type: TYPE_BOX
   texture: "pipe_gui/reset_pipe_game"
   id: "reset"
-  inherit_alpha: true
+  yanchor: YANCHOR_TOP
+  parent: "buttons"
 }
 nodes {
   position {
-    x: 565.0
-    y: 883.0
+    x: 240.0
   }
   size {
     x: 150.0
@@ -29,7 +44,8 @@ nodes {
   type: TYPE_BOX
   texture: "pipe_gui/exit_pipe_game"
   id: "exit"
-  inherit_alpha: true
+  yanchor: YANCHOR_TOP
+  parent: "buttons"
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

@@ -67,7 +67,7 @@ local function create_grid(self, count_in_row, count_in_columm, settings)
 		for j = 0, count_in_row - 1 do
 			idx_cell = idx_cell + 1
 			local cell = factory.create("#cell_factory", 
-				vmath.vector3(i * 70 + 170, j * 70 + 150, 0), 
+				vmath.vector3(i * 118 + 85, j * 118 + 75, 0), 
 				nil, 
 				{ 
 					is_ended = settings_level[idx_cell]["isEndPoint"], 
@@ -77,6 +77,16 @@ local function create_grid(self, count_in_row, count_in_columm, settings)
 			self.cells[i.." "..j] = cell
 			msg.post(cell, "add_cleat")
 		end
+	end
+end
+
+local function exit(self)
+	print("exit")
+end
+
+local function reset(self)
+	for _, path in ipairs(cells_pathes) do
+		clear_path(self, path)
 	end
 end
 
@@ -195,6 +205,14 @@ function on_message(self, message_id, message, sender)
 			check_game_state(self)
 			self.count_busy_cells = 0
 		end
+	end
+
+	if message_id == hash("reset") then
+		reset(self)
+	end
+
+	if message_id == hash("exit") then
+		exit(self)
 	end
 end
 

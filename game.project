@@ -1,5 +1,6 @@
 [bootstrap]
 main_collection = /main/main.collectionc
+render = /orthographic/render/orthographic.renderc
 
 [script]
 shared_state = 1
@@ -14,4 +15,8 @@ input_method = HiddenInputField
 [project]
 title = Pipe
 custom_resources = res/
+dependencies#0 = https://github.com/britzl/defold-orthographic/archive/master.zip
+
+[tilemap]
+max_tile_count = 1111111
 

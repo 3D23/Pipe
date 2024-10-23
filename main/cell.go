@@ -8,8 +8,8 @@ embedded_components {
   data: "default_animation: \"gridCell\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "size {\n"
-  "  x: 64.0\n"
-  "  y: 64.0\n"
+  "  x: 108.0\n"
+  "  y: 108.0\n"
   "}\n"
   "size_mode: SIZE_MODE_MANUAL\n"
   "textures {\n"
@@ -17,6 +17,12 @@ embedded_components {
   "  texture: \"/main/cell.atlas\"\n"
   "}\n"
   ""
+  position {
+    z: 0.7
+  }
+  scale {
+    z: 0.7
+  }
 }
 embedded_components {
   id: "cleat_factory"
