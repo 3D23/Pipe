@@ -43,3 +43,12 @@ images {
 images {
   image: "/images/end_pipe_yellow.png"
 }
+images {
+  image: "/images/curve_pipe_grey.png"
+}
+images {
+  image: "/images/end_pipe_grey.png"
+}
+images {
+  image: "/images/line_pipe_grey.png"
+}

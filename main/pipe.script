@@ -7,31 +7,9 @@ go.property("color", -1)
 
 local function update_pipe(self, vector, updated)
 	if self.is_end then
-        local color = colors_module.get_state(self.color)
-	    if color == "RED" then
-		    sprite.play_flipbook("#sprite", "end_pipe_red")
-	    elseif color == "YELLOW" then
-		    sprite.play_flipbook("#sprite", "end_pipe_yellow")
-	    elseif color == "GREEN" then
-		    sprite.play_flipbook("#sprite", "end_pipe_green")
-	    elseif color == "BLUE" then
-		    sprite.play_flipbook("#sprite", "end_pipe_blue")
-	    elseif color == "DARK" then
-		    sprite.play_flipbook("#sprite", "end_pipe_dark")
-	    end
+		sprite.play_flipbook("#sprite", "end_pipe_grey")
     else
-		local color = colors_module.get_state(self.color)
-	    if color == "RED" then
-		    sprite.play_flipbook("#sprite", self.type.."_pipe_red")
-	    elseif color == "YELLOW" then
-		    sprite.play_flipbook("#sprite", self.type.."_pipe_yellow")
-	    elseif color == "GREEN" then
-		    sprite.play_flipbook("#sprite", self.type.."_pipe_green")
-	    elseif color == "BLUE" then
-		    sprite.play_flipbook("#sprite", self.type.."_pipe_blue")
-	    elseif color == "DARK" then
-		    sprite.play_flipbook("#sprite", self.type.."_pipe_dark")
-	    end
+		sprite.play_flipbook("#sprite", self.type.."_pipe_grey")
 	end
 
 	if self.type == "line" then
