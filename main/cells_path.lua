@@ -20,28 +20,13 @@ end
 function cells_pathes.try_add_cell(cell) 
     local path = cells_pathes.get_last_path();
     if path then 
-        for _, value in pairs(path) do
+        for _, value in ipairs(path) do
             if value == cell then
                 return
             end
         end
         table.insert(path, cell) 
     end
-end
-
-function cells_pathes.return_by_cell(cell)
-    local path = cells_pathes.get_last_path()
-    local cell_index = 1000
-    local deleted_cells_index = {}
-    for index, value in pairs(path) do
-        if value == cell then
-            cell_index = index
-        end
-        if index > cell_index then
-            table.insert(deleted_cells_index, index)
-        end
-    end
-    return {path, deleted_cells_index}
 end
 
 function cells_pathes.get_last_path()
@@ -51,7 +36,7 @@ end
 function cells_pathes.clear_path(path) 
     for index, value in pairs(cells_pathes) do
         if value == path then
-            cells_pathes[index] = nil
+            table.remove(cells_pathes, index)
         end
     end
 end

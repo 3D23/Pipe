@@ -29,7 +29,7 @@ nodes {
   }
   type: TYPE_BOX
   texture: "pipe_gui/reset_pipe_game"
-  id: "reset"
+  id: "reset_btn"
   yanchor: YANCHOR_TOP
   parent: "buttons"
 }
@@ -43,7 +43,7 @@ nodes {
   }
   type: TYPE_BOX
   texture: "pipe_gui/exit_pipe_game"
-  id: "exit"
+  id: "exit_btn"
   yanchor: YANCHOR_TOP
   parent: "buttons"
 }
