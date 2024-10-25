@@ -21,12 +21,11 @@ local function clear_path(self, path)
 	end
 end
 
-local function is_valid(self, color, coords, sender)
---TITLE change color logic
-	return color == self.current_color and 
+local function is_valid(self, message, sender)
+	return message.is_ended and
 		self.current_path[1] ~= sender and 
-		math.abs(self.current_cell_coords.x - coords.x) + math.abs(self.current_cell_coords.y - coords.y) <= 1
---END
+		math.abs(self.current_cell_coords.x - message.coords.x) + math.abs(self.current_cell_coords.y - message.coords.y) <= 1
+
 end
 
 local function getn(table)
@@ -157,18 +156,14 @@ function on_message(self, message_id, message, sender)
 			msg.post(self.current_cell, "try_create_pipe", { color = message.color, vector = vmath.vector3(0, 0, 0)})
 		end
 	elseif message_id == hash("ok_on_pick") then
---TITLE change color logic
-		if message.busy == true then
+		if math.abs(self.current_cell_coords.x - message.coords.x) + math.abs(self.current_cell_coords.y - message.coords.y) > 1 then
 			msg.post(sender, "on_release", { touch_pos = message.touch_pos })
 			self.on_started = false
-		elseif math.abs(self.current_cell_coords.x - message.coords.x) + math.abs(self.current_cell_coords.y - message.coords.y) > 1 then
+		elseif message.busy == true then
 			msg.post(sender, "on_release", { touch_pos = message.touch_pos })
 			self.on_started = false
-		elseif message.is_ended == true and message.color ~= self.current_color then
-			msg.post(sender, "on_release", { touch_pos = message.touch_pos })
-			self.on_started = false
+			clear_path(self)
 		else
---END
 			self.prev_cell_coords = self.current_cell_coords
 			self.current_cell_coords = message.coords
 			self.prev_cell = self.current_cell
@@ -180,7 +175,7 @@ function on_message(self, message_id, message, sender)
 				self.current_cell_coords.y - self.prev_cell_coords.y, 0)})
 		end
 	elseif message_id == hash("ok_on_release") then
-		if is_valid(self, message.color, message.coords, sender) then
+		if is_valid(self, message, sender) then
 			send_message_check_busy(self)
 		else
 			if self.path_cleared == false then
