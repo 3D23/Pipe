@@ -1,5 +1,3 @@
-local colors_module = require("main.colors")
-
 go.property("is_end", false)
 go.property("vector", vmath.vector3())
 go.property("color", -1)
