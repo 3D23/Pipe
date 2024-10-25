@@ -85,4 +85,20 @@ function on_message(self, message_id, message, sender)
     if message_id == hash("delete_pipe") then
         go.delete()
     end
+
+	if message_id == hash("set_fail_state") then
+		if self.is_end then
+			sprite.play_flipbook("#sprite", "end_pipe_red")
+		else
+			sprite.play_flipbook("#sprite", self.type.."_pipe_red")
+		end
+	end
+
+	if message_id == hash("set_ok_state") then
+		if self.is_end then
+			sprite.play_flipbook("#sprite", "end_pipe_green")
+		else
+			sprite.play_flipbook("#sprite", self.type.."_pipe_green")
+		end
+	end
 end

@@ -131,6 +131,21 @@ local function check_game_state(self)
 	end
 end
 
+local function set_path_state(self)
+	local path = cells_pathes[#cells_pathes]
+	local first_cell_color = go.get(path[1], "color")
+	local last_cell_color = go.get(path[#path], "color")
+	if first_cell_color == get_pair_color(last_cell_color) then
+		for _, val in ipairs(path) do
+			msg.post(val, "set_ok_state")
+		end
+	else
+		for _, val in ipairs(path) do
+			msg.post(val, "set_fail_state")
+		end
+	end
+end
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
@@ -218,6 +233,7 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == hash("ok_on_release") then
 		if is_valid(self, message, sender) then
+			set_path_state(self)
 			send_message_check_busy(self)
 		else
 			if self.path_cleared == false then
